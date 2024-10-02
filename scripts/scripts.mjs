@@ -26,33 +26,86 @@ var requestOptions = {
 
 let result; // Declare the variable outside the try-catch block
 let breeds = [];
+// async function initialLoad() {
+
+
+//   try {
+//     const response = await fetch(
+//       "https://api.thecatapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=100",
+//       requestOptions
+//     );
+//     result = await response.json();
+//    // console.log(result[1].breeds[0].name);
+//     result.forEach((element) => {
+//     // console.log(element.breeds[0].name);
+//     if (!breeds.includes(element.breeds[0].name)) {
+//         breeds.push(element.breeds[0].name);
+//     }
+//     //   const option = document.createElement("option");
+//     //   option.value = element.breeds[0].id;
+//     //   option.text = element.breeds[0].name;
+//     //   breedSelect.appendChild(option);
+//     });
+//     console.log(breeds);
+//     console.log(breeds.length);
+//     document.getElementById("breedSelect").innerHTML = breeds.map(
+//         (breed) => `<option value="${breed}">${breed}</option>`
+//       );
+
+//   } catch (error) {
+//     console.log("error", error);
+
+// }
+
+//   //console.log(result); // Access the result outside the try-catch block
+//   return result;
+// }
+
+// //console.log(result);
+// initialLoad();
+
+
+
+
+//https://api.thecatapi.com/v1/breeds
+
+let id_table = [];
+let id_object = {};
 async function initialLoad() {
-
-
-  try {
+try {
     const response = await fetch(
-      "https://api.thecatapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=100",
+      //"https://api.thecatapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=100",
+        "https://api.thecatapi.com/v1/breeds",
       requestOptions
     );
     result = await response.json();
-   // console.log(result[1].breeds[0].name);
-    result.forEach((element) => {
-    // console.log(element.breeds[0].name);
-    if (!breeds.includes(element.breeds[0].name)) {
-        breeds.push(element.breeds[0].name);
-    }
-    //   const option = document.createElement("option");
-    //   option.value = element.breeds[0].id;
-    //   option.text = element.breeds[0].name;
-    //   breedSelect.appendChild(option);
-    });
-    console.log(breeds);
-    console.log(breeds.length);
-    document.getElementById("breedSelect").innerHTML = breeds.map(
-        (breed) => `<option value="${breed}">${breed}</option>`
-      );
 
-  } catch (error) {
+   //console.log(result);
+    result.forEach((element) => {
+        
+        if (!breeds.includes(element.name)) {
+            breeds.push(element.name);
+            id_object[element.name] = element.id;
+  
+            //console.log(element.id,":", element.name);
+           //id_table.push(id_object);
+       
+        }
+
+    });
+
+        // console.log(breeds);
+        // console.log(breeds.length);
+        console.log(id_object);
+        console.log(id_object.length);
+        document.getElementById("breedSelect").innerHTML = breeds.map(
+            (breed) => `<option value="${breed}">${breed}</option>`
+          );
+  
+    }
+
+
+   catch (error) {
     console.log("error", error);
 
 }
@@ -63,6 +116,46 @@ async function initialLoad() {
 
 //console.log(result);
 initialLoad();
+
+let breedSelect = document.getElementById("breedSelect");
+console.log(breedSelect);
+console.log(id_table);
+
+breedSelect.addEventListener("change",  ()=> {
+console.log(breedSelect.value);
+console.log(id_object[breedSelect.value]);
+// });
+async function getBreedInfo() {
+    try {
+        const response = await fetch(
+            `https://api.thecatapi.com/v1/images/search?breed_ids=${id_object[breedSelect.value]}`,
+            requestOptions
+        );
+        result = await response.json();
+        console.log(result);
+    } catch (error) {
+        console.log("error", error);
+    }
+    return result;
+
+}
+//console.log(result);
+
+getBreedInfo() 
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
