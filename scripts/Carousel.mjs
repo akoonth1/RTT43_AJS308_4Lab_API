@@ -1,4 +1,4 @@
-import * as bootstrap from "bootstrap";
+// import * as bootstrap from "bootstrap";
 import { favourite } from "./index.mjs";
 
 console.log("Hello, world! on Carousel");
