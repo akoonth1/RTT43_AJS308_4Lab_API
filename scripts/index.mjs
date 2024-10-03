@@ -8,11 +8,11 @@
 // live_puuEljtc6saT1VlfCIYSs4S9XcRzM4TwntjxGSJAsU4moCDnKt8cIuqtaJdkt4qg
 
 
-// import * as Carousel from "./Carousel.mjs";
-// import axios from "axios";
+import * as Carousel from "./Carousel.mjs";
+//import axios from "axios";
 
 
-console.log("Hello, world!"); 
+console.log("Hello, world!");
 
 // The breed selection input element.
 const breedSelect = document.getElementById("breedSelect");

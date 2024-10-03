@@ -142,7 +142,7 @@ initialLoad();
 // console.log(breedSelect);
 // console.log(id_table);
 
-Carousel.start();
+
  let cat_pics = [];
 breedSelect.addEventListener("change",  ()=> {
 // console.log(breedSelect.value);
@@ -165,27 +165,30 @@ async function getBreedInfo() {
             //carouselInner.innerHTML = '';
             Carousel.clear();
         
-                cat_pics.forEach((element, index) => {
-          console.log(element.url);
+                cat_pics.forEach((element, index) =>{ 
+          console.log(element);
+               let cat_inv_pic  = Carousel.createCarouselItem(element.url, "cat", element.id);
+        //   // Get the template
+        //   const template = document.getElementById("carouselItemTemplate").content;
         
-          // Get the template
-          const template = document.getElementById("carouselItemTemplate").content;
+        //   // Clone the template content
+        //   const clone = document.importNode(template, true);
         
-          // Clone the template content
-          const clone = document.importNode(template, true);
+        //   // Insert the picture into the cloned template
+        //   const img = clone.querySelector("img");
+        //   img.src = element.url;
+        //   img.alt = "cat";
         
-          // Insert the picture into the cloned template
-          const img = clone.querySelector("img");
-          img.src = element.url;
-          img.alt = "cat";
-        
-          // Add 'active' class to the first item
-          if (index === 0) {
-            clone.querySelector(".carousel-item").classList.add("active");
-          }
+        //   // Add 'active' class to the first item
+        //   if (index === 0) {
+        //     clone.querySelector(".carousel-item").classList.add("active");
+        //   }
         
           // Append the cloned template to the carousel
-          document.getElementById("carouselInner").appendChild(clone);
+          //document.getElementById("carouselInner").appendChild(clone);
+    Carousel.appendCarousel(cat_inv_pic);
+
+
         });
         // cat_pics.forEach((element) => {
         //     console.log(element.url);
@@ -196,7 +199,8 @@ async function getBreedInfo() {
         //     document.getElementById("carouselInner").appendChild(img);
         // });
 
-     
+           // Start the carousel
+         Carousel.start();
 
         infoDump.innerHTML =   Object.values(cat_info(id_object[breedSelect.value])) ;
     

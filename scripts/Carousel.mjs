@@ -1,4 +1,4 @@
-// import * as bootstrap from "bootstrap";
+//import * as bootstrap from "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js";
 import { favourite } from "./index.mjs";
 
 console.log("Hello, world! on Carousel");
