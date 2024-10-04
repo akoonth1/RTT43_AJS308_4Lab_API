@@ -140,6 +140,7 @@ async function getBreedInfo() {
          }).join('<br>');
          
          infoDump.innerHTML = formattedInfo;
+         infoDump.style.fontSize = "40px";
     
 
         //   console.log(cat_pics);
@@ -164,32 +165,6 @@ function cat_info(id) {
     return cat_info;
 }
 
-// Add Axios interceptors
-axios.interceptors.request.use(request => {
-  request.metadata = { startTime: new Date() };
-  progressBar.style.width = "0%";
-  document.body.style.cursor = "progress";
-  return request;
-}, error => {
-  return Promise.reject(error);
-});
-
-axios.interceptors.response.use(response => {
-  const endTime = new Date();
-  document.body.style.cursor = "default";
-  const duration = endTime - response.config.metadata.startTime;
-  console.log(`Request to ${response.config.url} took ${duration} ms`);
-  return response;
-}, error => {
-  return Promise.reject(error);
-});
-
-
-function updateProgress(progressEvent) {
-  const percentage = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-  progressBar.style.width = `${percentage}%`;
-  console.log(`Download progress: ${percentage}%`);
-}
 
 /**
  * 4. Change all of your fetch() functions to axios!
@@ -253,6 +228,7 @@ export async function favourite(imgId) {
     method: "POST",
     headers: headers,
     redirect: "follow",
+    onDownloadProgress: updateProgress
   };
 
   var rawBody = JSON.stringify({ 
@@ -316,10 +292,12 @@ export async function favourite(imgId) {
 
 async function getFavourites() { 
   let favourites;
+  //progressBar.style.width = "0%";
   try {
     const response = await fetch(
       'https://api.thecatapi.com/v1/favourites?limit=20',
       requestOptions
+  
     );
     favourites = await response.json();
     //console.log(favourites);
@@ -329,12 +307,47 @@ async function getFavourites() {
   }
   return favourites;
 }
+
+
+async function getCatDetails(imageId) {
+  try {
+    const response = await fetch(
+      `https://api.thecatapi.com/v1/images/${imageId}`,
+      requestOptions
+    );
+    const catDetails = await response.json();
+    return catDetails;
+  } catch (error) {
+    console.log("error", error);
+    return null;
+  }
+}
+
+
 getFavouritesBtn = document.getElementById("getFavouritesBtn");
 getFavouritesBtn.addEventListener("click", async(e) =>{
+
+  infoDump.innerHTML = "";
   let myfav = await getFavourites();
   console.log(myfav);
-  
+  Carousel.clear();
+  let cat_list = [];
+  for (let i = 0; i < myfav.length; i++) {
+    let cat_inv_pic  = Carousel.createCarouselItem(myfav[i].image.url, "cat", myfav[i].image.id);
+    Carousel.appendCarousel(cat_inv_pic);
+    let tempcat =await getCatDetails(myfav[i].image.id);
+  //  console.log(tempcat);
+  //   console.log(tempcat.breeds[0].name);
+    cat_list.push(" "+tempcat.breeds[0].name);
+    
+  }
   Carousel.start();
+  console.log(cat_list);
+  infoDump.innerHTML = "My favourite cat pics " + cat_list;
+  infoDump.style.fontSize = "40px";
+  //myfav.length + "<br>"+ myfav.map((fav) => fav.image.url).join('<br>');
+  // console.log(myfav[0].image.id);
+  // console.log(await getCatDetails(myfav[0].image.id))
 
   
 });
@@ -347,3 +360,34 @@ getFavouritesBtn.addEventListener("click", async(e) =>{
  * - Test other breeds as well. Not every breed has the same data available, so
  *   your code should account for this.
  */
+
+
+
+
+
+// Add Axios interceptors
+axios.interceptors.request.use(request => {
+  request.metadata = { startTime: new Date() };
+  progressBar.style.width = "0%";
+  document.body.style.cursor = "progress";
+  return request;
+}, error => {
+  return Promise.reject(error);
+});
+
+axios.interceptors.response.use(response => {
+  const endTime = new Date();
+  document.body.style.cursor = "default";
+  const duration = endTime - response.config.metadata.startTime;
+  console.log(`Request to ${response.config.url} took ${duration} ms`);
+  return response;
+}, error => {
+  return Promise.reject(error);
+});
+
+
+function updateProgress(progressEvent) {
+  const percentage = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+  progressBar.style.width = `${percentage}%`;
+  console.log(`Download progress: ${percentage}%`);
+}
