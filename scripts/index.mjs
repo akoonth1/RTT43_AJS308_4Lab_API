@@ -21,15 +21,16 @@ const infoDump = document.getElementById("infoDump");
 // The progress bar div element.
 const progressBar = document.getElementById("progressBar");
 // The get favourites button element.
-const getFavouritesBtn = document.getElementById("getFavouritesBtn");
+let getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 // Step 0: Store your API key here for reference and easy access.
 const API_KEY = "live_puuEljtc6saT1VlfCIYSs4S9XcRzM4TwntjxGSJAsU4moCDnKt8cIuqtaJdkt4qg";
 
 progressBar.style.width = "0%";
+axios.defaults.headers.common['x-api-key'] = API_KEY;
+axios.defaults.headers.common['Content-Type'] = 'application/json';
 
-
-const headers = new Headers({
+let headers = new Headers({
   "Content-Type": "application/json",
   "x-api-key": API_KEY,
 });
@@ -133,7 +134,12 @@ async function getBreedInfo() {
            // Start the carousel
          Carousel.start();
 
-        infoDump.innerHTML =   Object.values(cat_info(id_object[breedSelect.value])) ;
+         const breedInfo = cat_info(id_object[breedSelect.value]);
+         const formattedInfo = Object.entries(breedInfo).map(([key, value]) => {
+           return `<strong>${key}:</strong> ${value}`;
+         }).join('<br>');
+         
+         infoDump.innerHTML = formattedInfo;
     
 
         //   console.log(cat_pics);
@@ -235,8 +241,10 @@ function updateProgress(progressEvent) {
  */
 export async function favourite(imgId) {
   console.log(imgId);
+  console.log(API_KEY);
 
-  const headers = new Headers({
+
+   headers = new Headers({
     "Content-Type": "application/json",
     "x-api-key": API_KEY,
   });
@@ -247,20 +255,51 @@ export async function favourite(imgId) {
     redirect: "follow",
   };
 
-  try {
-    const response = await axios.post(
-      "https://api.thecatapi.com/v1/favourites",
-      {
-        image_id: imgId,
-      },
-       sendOptions
-    );
-    console.log(image_id);
-    console.log(response.data);
-  } catch (error) {
-    console.log("error", error);
-  }
+  var rawBody = JSON.stringify({ 
+    "image_id": imgId,
+    "sub_id":"user-123"
+     });
+
+     try {
+      // Fetch the list of favourites
+      const favouritesResponse = await axios.get(
+        "https://api.thecatapi.com/v1/favourites",
+        sendOptions
+      );
+      const favourites = favouritesResponse.data;
+  
+      // Check if the image is already favourited
+      const favourite = favourites.find(fav => fav.image_id === imgId);
+  
+      if (favourite) {
+        // If the image is already favourited, delete the favourite
+        await axios.delete(
+          `https://api.thecatapi.com/v1/favourites/${favourite.id}`,
+          sendOptions
+        );
+        console.log(`Unfavourited image with ID: ${imgId}`);
+        console.log("favourite deleted");
+      } else {
+        // If the image is not favourited, create a new favourite
+        const response = await axios.post(
+          "https://api.thecatapi.com/v1/favourites",
+          rawBody,
+          sendOptions
+        );
+        console.log(`Favourited image with ID: ${imgId}`);
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
 }
+
+
+// {
+//   method: 'POST',
+//   headers: { 'x-api-key': 'YOUR-KEY'} ,
+//   body: rawBody
+// }
 
 /**
  * 9. Test your favourite() function by creating a getFavourites() function.
@@ -271,6 +310,35 @@ export async function favourite(imgId) {
  *    If that isn't in its own function, maybe it should be so you don't have to
  *    repeat yourself in this section.
  */
+
+
+
+
+async function getFavourites() { 
+  let favourites;
+  try {
+    const response = await fetch(
+      'https://api.thecatapi.com/v1/favourites?limit=20',
+      requestOptions
+    );
+    favourites = await response.json();
+    //console.log(favourites);
+  } catch (error) {
+    console.log("error", error);
+    favourites = "failed request";
+  }
+  return favourites;
+}
+getFavouritesBtn = document.getElementById("getFavouritesBtn");
+getFavouritesBtn.addEventListener("click", async(e) =>{
+  let myfav = await getFavourites();
+  console.log(myfav);
+  
+  Carousel.start();
+
+  
+});
+
 
 /**
  * 10. Test your site, thoroughly!
