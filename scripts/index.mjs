@@ -106,9 +106,11 @@ async function getBreedInfo() {
 
     try {
         const response = await axios.get(
-            `https://api.thecatapi.com/v1/images/search?limit=20&breed_ids=${id_object[breedSelect.value]}`,
-            requestOptions
+            `https://api.thecatapi.com/v1/images/search?limit=20&breed_ids=${id_object[breedSelect.value]}`
+            // ,
+            // requestOptions
         );
+        //requestOptions not needed as the headers are already set in axios.defaults.headers.common
         result = await response.data;
         cat_pics = result;
 
